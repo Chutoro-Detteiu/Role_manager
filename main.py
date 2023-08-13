@@ -1,10 +1,10 @@
-#Role Manager for Discord Ver.1.0
-version = 1.0
+#Role Manager for Marron Race Room Ver.1.1
+version = '1.1'
 
 import discord 
 import argparse
 from discord import app_commands
-from discord import commands
+from discord.ext import commands
 import traceback
 
 
@@ -12,12 +12,13 @@ TOKEN_dev  = 'hogehoge1234567890'
 TOKEN_prod = 'hogehoge1234567890'
 
 guildid_dev  = 1234567890
-guildid_prod = 1234567890
+
 
 Intents = discord.Intents.default()
 Intents.members = True
-client  = discord.Client(activity='Ver.'+str(version),intents=discord.Intents.all())
-tree    = app_commands.CommandTree(client)
+client = discord.Client(activity=discord.Game('Ver.'+version),intents=Intents)
+tree   = app_commands.CommandTree(client)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-p','--production',  action='store_true', default=False , help='Use when running in PRODUCTION ENVIRONMENT')
@@ -25,7 +26,7 @@ args   = parser.parse_args()
 
 if args.production:
     TOKEN    = TOKEN_prod
-    guild_id = guildid_prod
+    guild_id = None
 else:
     TOKEN    = TOKEN_dev
     guild_id = guildid_dev
@@ -36,9 +37,13 @@ print('Please wait, now launching...')
 @client.event
 async def on_ready():
     await tree.sync()
-    print('Role Management System for MRR Ver.1.0')
+    print('Role Management System for MRR Ver.' + version)
     print('When you want to operate me, type the command in the Discord message...')
 
+@client.event
+async def on_message(message):
+    global guild_id
+    guild_id = message.guild.id
 
 @tree.command(name="add",description="ロール付与")
 @commands.has_permmisons(administrator=True)
