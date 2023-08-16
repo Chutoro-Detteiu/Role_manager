@@ -46,7 +46,7 @@ async def on_message(message):
     guild_id = message.guild.id
 
 @tree.command(name="add",description="ロール付与")
-@commands.has_permmisons(administrator=True)
+@commands.has_permissions(administrator=True)
 async def add(interaction: discord.Interaction, name:str, role:str):
     try:
         guild     = client.get_guild(guild_id)
@@ -62,7 +62,7 @@ async def add(interaction: discord.Interaction, name:str, role:str):
 
 
 @tree.command(name="remove",description="ロール削除")
-@commands.has_permmisons(administrator=True)
+@commands.has_permissions(administrator=True)
 async def remove(interaction: discord.Interaction, name:str, role:str):
     try:
         guild     = client.get_guild(guild_id)
