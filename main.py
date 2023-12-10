@@ -1,5 +1,5 @@
-#Role Manager for Marron Race Room Ver.1.1
-version = '1.1'
+#Role Manager Ver.1.1α
+version = '1.1α'
 
 import discord 
 import argparse
@@ -10,9 +10,6 @@ import traceback
 
 TOKEN_dev  = 'hogehoge1234567890'
 TOKEN_prod = 'hogehoge1234567890'
-
-guildid_dev  = 1234567890
-
 
 Intents = discord.Intents.default()
 Intents.members = True
@@ -26,36 +23,23 @@ args   = parser.parse_args()
 
 if args.production:
     TOKEN    = TOKEN_prod
-    guild_id = None
 else:
     TOKEN    = TOKEN_dev
-    guild_id = guildid_dev
-    
+
 
 print('Please wait, now launching...')
 
 @client.event
 async def on_ready():
     await tree.sync()
-    print('Role Management System for MRR Ver.' + version)
+    print('Role Management System Ver.' + version)
     print('When you want to operate me, type the command in the Discord message...')
-
-@client.event
-async def on_message(message):
-    global guild_id
-    guild_id = message.guild.id
 
 @tree.command(name="add",description="ロール付与")
 @commands.has_permissions(administrator=True)
-async def add(interaction: discord.Interaction, name:str, role:str):
+async def add(interaction: discord.Interaction, name:discord.Member, role:discord.Role):
     try:
-        guild     = client.get_guild(guild_id)
-        memberid  = int(name.replace('<@', '').replace('>',''))
-        roleid    = int(role.replace('<@&', '').replace('>',''))
-        print(name,memberid,role,roleid)
-        role_data = guild.get_role(roleid)
-        member    = guild.get_member(memberid)
-        await member.add_roles(role_data)
+        await name.add_roles(role)
         await interaction.response.send_message("Done")
     except:
         await interaction.response.send_message(traceback.format_exc())
@@ -63,20 +47,11 @@ async def add(interaction: discord.Interaction, name:str, role:str):
 
 @tree.command(name="remove",description="ロール削除")
 @commands.has_permissions(administrator=True)
-async def remove(interaction: discord.Interaction, name:str, role:str):
+async def remove(interaction: discord.Interaction, name:discord.Member, role:discord.Role):
     try:
-        guild     = client.get_guild(guild_id)
-        memberid  = int(name.replace('<@', '').replace('>',''))
-        roleid    = int(role.replace('<@&', '').replace('>',''))
-        print(name,memberid,role,roleid)
-        role_data = guild.get_role(roleid)
-        member    = guild.get_member(memberid)
-        await member.remove_roles(role_data)
+        await name.remove_roles(role)
         await interaction.response.send_message("Done")
     except:
         await interaction.response.send_message(traceback.format_exc())
-
-
-
 
 client.run(TOKEN)
